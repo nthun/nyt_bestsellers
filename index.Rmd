@@ -9,6 +9,8 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(ggrepel)
+
 theme_set(theme_light())
 ```
 
@@ -37,9 +39,6 @@ nyt <-
 # Books with longest ranking time
 
 ```{r}
-
-install.packages("ggrepel")
-library(ggrepel)
 
 nyt_titles %>% 
   arrange(desc(total_weeks)) %>% 
@@ -120,24 +119,24 @@ nyt_full %>%
 ```
 
 ```{r}
-imdb_raw <- read_tsv("title.basics.tsv/data.tsv")
-
-distinct(imdb_raw, titleType)
-
-imdb <- 
-  imdb_raw %>% 
-  transmute(title = str_to_title(primaryTitle),
-            year_movie = startYear,
-            runtime = runtimeMinutes,
-            genres,
-            titleType,
-            adaptation = 1) %>% 
-  filter(titleType == "movie")
-
-
-adaptations <-
-  nyt %>% 
-  left_join(imdb, by = "title")
+# imdb_raw <- read_tsv("title.basics.tsv/data.tsv")
+# 
+# distinct(imdb_raw, titleType)
+# 
+# imdb <- 
+#   imdb_raw %>% 
+#   transmute(title = str_to_title(primaryTitle),
+#             year_movie = startYear,
+#             runtime = runtimeMinutes,
+#             genres,
+#             titleType,
+#             adaptation = 1) %>% 
+#   filter(titleType == "movie")
+# 
+# 
+# adaptations <-
+#   nyt %>% 
+#   left_join(imdb, by = "title")
 
 ```
 
