@@ -65,14 +65,16 @@ nyt %>%
   
 ```
 
-# Most popular books of each decade
+# Which decade had books that were on the bestseller list for the longest time?
 
 ```{r}
-nyt %>% 
+top3 <- 
+  nyt %>% 
   group_by(decade) %>% 
   slice_max(total_weeks, n = 3) %>% 
-  print(n = 100)
-
+  arrange(-total_weeks) %>% 
+  mutate(rank = row_number()) %>% 
+  ungroup()
 
 nyt %>% 
   group_by(decade) %>% 
@@ -80,41 +82,51 @@ nyt %>%
   ggplot() +
   aes(x = decade, y = avg_time_onlist) +
   geom_line() +
-  geom_point()
+  geom_point() +
+  labs(title = "Average time on NYT bestseller list by decade", 
+       subtitle = "The 1960-1970's books were on the bestseller list for the longest time",
+       y = "Average time on NYT bestseller list",
+       x = NULL)
 
-nyt %>% 
-  group_by(year) %>% 
-  summarise(avg_time_onlist = mean(total_weeks)) %>% 
+```
+
+# 3 most successful books of each decade
+```{r}
+
+top3 %>% 
   ggplot() +
-  aes(x = year, y = avg_time_onlist) +
-  geom_line() +
-  geom_point()
+  aes(x = year, y = total_weeks, label = title) +
+  # geom_tile(aes(x = decade, y = Inf)) +
+  geom_col(position = "dodge") +
+  geom_text_repel() +
+  scale_x_continuous(breaks = seq(1930, 2020, 10)) +
+  labs(x = NULL, y = "Total weeks on bestseller list")
 
-  
 ```
 
 
-```{r}
-nyt %>% 
-  count(year) %>% 
-  ggplot() +
-  aes(x = year, y = n) +
-  geom_line() +
-  geom_point()
 
-nyt %>% 
-  count(decade) %>% 
-  ggplot() +
-  aes(x = decade, y = n) +
-  geom_line() +
-  geom_point()
+# The number of books on list from the full datasets
+There may be a bias that comes from the number of books that were selected to the smaller dataset.
+
+```{r}
 
 nyt_full %>% 
   count(year) %>% 
   ggplot() +
   aes(x = year, y = n) +
   geom_line() +
-  geom_point()
+  geom_point() + 
+  labs(title = "Number of books by year from the full dataset")
+
+nyt_full %>% 
+  mutate(decade = floor(year/10)*10) %>% 
+  count(decade) %>% 
+  ggplot() +
+  aes(x = decade, y = n) +
+  geom_line() +
+  geom_point() + 
+  labs(title = "Number of books by year from the full dataset")
 
 ```
 
